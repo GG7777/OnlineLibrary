@@ -1,6 +1,9 @@
 package net.rest;
 
+import net.dto.BookGenresAuthorsDto;
 import net.model.Book;
+import net.repository.AuthorsRepository;
+import net.repository.GenresRepository;
 import net.service.BooksService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping(value = "/api/books", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -21,29 +25,30 @@ public class BooksController {
     }
 
     @GetMapping(value = "")
-    public ResponseEntity<List<Book>> GetBooks(@RequestParam("start") @NotNull Integer start,
-                                               @RequestParam("stop") @NotNull Integer stop) {
-        List<Book> books = booksService.findByRange(start, stop);
-        return new ResponseEntity<>(books, HttpStatus.OK);
+    public ResponseEntity<Stream<BookGenresAuthorsDto>> GetBooks(
+            @RequestParam("start") @NotNull Integer start,
+            @RequestParam("stop") @NotNull Integer count) {
+        List<Book> books = booksService.findByRange(start, count);
+        return new ResponseEntity<>(books.stream().map(book -> BookGenresAuthorsDto.toDto(book)), HttpStatus.OK);
     }
 
-    @GetMapping(value = "{id}")
-    public ResponseEntity<Book> GetBook(@PathVariable("id") @NotNull Long bookId) {
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<BookGenresAuthorsDto> GetBook(@PathVariable("id") @NotNull Long bookId) {
         Book book = booksService.findById(bookId);
 
         if (book == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>(book, HttpStatus.OK);
+        return new ResponseEntity<>(BookGenresAuthorsDto.toDto(book), HttpStatus.OK);
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<Book> AddBook(@RequestBody @NotNull Book bookDto) {
-        Book book = booksService.addNewBook(bookDto);
+    public ResponseEntity<BookGenresAuthorsDto> AddBook(@RequestBody @NotNull BookGenresAuthorsDto dto) {
+        Book book = booksService.addNewBook(BookGenresAuthorsDto.toBook(dto));
 
         if (book == null)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>(book, HttpStatus.CREATED);
+        return new ResponseEntity<>(BookGenresAuthorsDto.toDto(book), HttpStatus.CREATED);
     }
 }
