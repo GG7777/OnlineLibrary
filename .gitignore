@@ -1,4 +1,11 @@
-back/.idea
+# Intellij
+back/.idea/
+back/*.iml
+back/*.iws
+
+# Maven
+back/log/
+back/target/
 
 #front
 # dependencies

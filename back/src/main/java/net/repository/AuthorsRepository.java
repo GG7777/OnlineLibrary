@@ -1,7 +1,7 @@
 package net.repository;
 
 import net.model.Author;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface AuthorsRepository extends JpaRepository<Author, Long> {
+public interface AuthorsRepository extends CrudRepository<Author, Long> {
 }
