@@ -17,13 +17,11 @@ import java.util.stream.Stream;
 @RequestMapping(value = "/api/books")
 public class BooksController {
     private BooksService booksService;
-    private ImageStorageService imageStorageService;
 
     public BooksController(
             BooksService booksService,
             ImageStorageService imageStorageService) {
         this.booksService = booksService;
-        this.imageStorageService = imageStorageService;
     }
 
     @GetMapping(value = "")
@@ -43,29 +41,4 @@ public class BooksController {
 
         return new ResponseEntity<>(BookGenresAuthorsDto.toDto(book), HttpStatus.OK);
     }
-
-    @PostMapping(value = "")
-    public ResponseEntity<BookGenresAuthorsDto> AddBook(
-            @RequestBody BookGenresAuthorsDto dto,
-            @RequestParam(value = "avatar", required = false) MultipartFile file) {
-        Book book = booksService.addNewBook(BookGenresAuthorsDto.toBook(dto));
-        if (book == null)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        if (file != null) {
-            String avatarPath = imageStorageService.save(file);
-            book.setAvatar(avatarPath);
-        }
-
-        return new ResponseEntity<>(BookGenresAuthorsDto.toDto(book), HttpStatus.CREATED);
-    }
-
-//    @PostMapping(value = "/file")
-//    public ResponseEntity<String> saveFile(
-//            @RequestParam("avatar") MultipartFile file) {
-//        if (file != null)
-//            return new ResponseEntity<>(imageStorageService.save(file), HttpStatus.OK);
-//
-//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//    }
 }
