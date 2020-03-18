@@ -1,0 +1,8 @@
+.search-field {
+  height: 64px;
+  width: 640px;
+
+  margin: 16px auto 0 auto;
+  border: 1px solid #cacaca;
+  border-radius: 32px;
+}
